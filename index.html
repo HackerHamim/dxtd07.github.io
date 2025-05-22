@@ -142,58 +142,72 @@
     <p>DOZI<br>GAP UP<br>GAP DOWN<br>HAMMER</p>
     <button onclick="document.getElementById('rulesPopup').style.display='none'">Close</button>
   </div>
+<script>
+  let lastSignalTime = null;
 
-  <script>
-    function login() {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+  function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
 
-      if (email === "Siyamhossain354@gmail.com" && password === "dx07bot") {
-        document.getElementById('loginBox').style.display = "none";
-        document.getElementById('mainApp').style.display = "block";
-      } else {
-        document.getElementById('loginError').innerText = "Invalid email or password!";
-      }
+    if (email === "Siyamhossain354@gmail.com" && password === "dx07bot") {
+      document.getElementById('loginBox').style.display = "none";
+      document.getElementById('mainApp').style.display = "block";
+    } else {
+      document.getElementById('loginError').innerText = "Invalid email or password!";
+    }
+  }
+
+  function generateSignal() {
+    const pair = document.getElementById("pair").value;
+    const duration = document.getElementById("duration").value;
+    const trend = document.getElementById("trend").value;
+    const momentum = document.getElementById("momentum").value;
+
+    if (
+      pair === "Select Pair" ||
+      duration === "Select Duration" ||
+      trend === "Select Trend" ||
+      momentum === "Select Momentum"
+    ) {
+      alert("Please select all fields!");
+      return;
     }
 
-    function generateSignal() {
-      const pair = document.getElementById("pair").value;
-      const duration = document.getElementById("duration").value;
-      const trend = document.getElementById("trend").value;
-      const momentum = document.getElementById("momentum").value;
+    const now = new Date();
 
-      if (
-        pair === "Select Pair" ||
-        duration === "Select Duration" ||
-        trend === "Select Trend" ||
-        momentum === "Select Momentum"
-      ) {
-        alert("Please select all fields!");
-        return;
-      }
-
-      const direction = Math.random() > 0.5 ? "CALL" : "PUT";
-      const probability = (95 + Math.random() * 5).toFixed(2);
-      const volume = ["Low", "Medium", "High"][Math.floor(Math.random() * 3)];
-      const momentumDisplay = momentum === "Weak" ? "BAD MOMENTUM" : momentum.toUpperCase();
-
-      const now = new Date();
-      const hours = now.getHours() % 12 || 12;
-      const minutes = now.getMinutes().toString().padStart(5, '0');
-      const ampm = now.getHours() >= 12 ? "PM" : "AM";
-      const timeStr = `${hours}:${minutes} ${ampm}`;
-
-      const signalText =
-        `${pair} - ${direction}\n` +
-        `Trade Time: ${timeStr}\n` +
-        `Duration: ${duration}\n` +
-        `Trend: ${trend}\n` +
-        `Probability: ${probability}%\n` +
-        `Volume: ${volume}\n` +
-        `Momentum: ${momentumDisplay}`;
-
-      document.getElementById("signalOutput").innerText = signalText;
+    // Ensure 7-minute gap
+    if (lastSignalTime && (now - lastSignalTime) < 7 * 60 * 1000) {
+      const minutesLeft = Math.ceil((7 * 60 * 1000 - (now - lastSignalTime)) / 60000);
+      alert(`Please wait ${minutesLeft} more minute(s) before generating another signal.`);
+      return;
     }
-  </script>
+
+    lastSignalTime = new Date(); // mark signal generation time
+
+    // Get next minute
+    const nextMinute = new Date(now.getTime() + 60000);
+    const hours = nextMinute.getHours() % 12 || 12;
+    const minutes = nextMinute.getMinutes().toString().padStart(2, '0');
+    const ampm = nextMinute.getHours() >= 12 ? "PM" : "AM";
+    const timeStr = `${hours}:${minutes} ${ampm}`;
+
+    const direction = Math.random() > 0.5 ? "CALL" : "PUT";
+    const probability = (95 + Math.random() * 5).toFixed(2);
+    const volume = ["Low", "Medium", "High"][Math.floor(Math.random() * 3)];
+    const momentumDisplay = momentum === "Weak" ? "BAD MOMENTUM" : momentum.toUpperCase();
+
+    const signalText =
+      `${pair} - ${direction}\n` +
+      `Trade Time: ${timeStr}\n` +
+      `Duration: ${duration}\n` +
+      `Trend: ${trend}\n` +
+      `Probability: ${probability}%\n` +
+      `Volume: ${volume}\n` +
+      `Momentum: ${momentumDisplay}`;
+
+    document.getElementById("signalOutput").innerText = signalText;
+  }
+</script>
+
 </body>
 </html>
