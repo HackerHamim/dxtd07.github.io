@@ -1,1 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DX07 Trader Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-color: black;
+      font-family: 'Courier New', monospace;
+      color: #00ff00;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
 
+    .container, .login-box {
+      border: 2px solid #00ff00;
+      padding: 15px;
+      margin: 20px auto;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+
+    p, label {
+      font-size: 14px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0 10px;
+      font-size: 14px;
+      border: 2px solid #00ff00;
+      background-color: black;
+      color: #00ff00;
+      border-radius: 5px;
+    }
+
+    .output {
+      margin-top: 15px;
+      font-size: 16px;
+      white-space: pre-line;
+    }
+
+    .popup {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: black;
+      border: 2px solid #00ff00;
+      padding: 15px;
+      width: 90%;
+      max-width: 300px;
+      border-radius: 10px;
+    }
+
+    .popup button {
+      padding: 5px 10px;
+      background-color: #00ff00;
+      color: black;
+      border: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-box" id="loginBox">
+    <h1>Login to DX07 TRADER</h1>
+    <input type="email" id="email" placeholder="Enter Email">
+    <input type="password" id="password" placeholder="Enter Password">
+    <button onclick="login()">Login</button>
+    <p id="loginError" style="color: red;"></p>
+  </div>
+
+  <div class="container" id="mainApp" style="display: none;">
+    <h1>DX07 TRADER</h1>
+    <p>WELCOME TO DX07 TRADER VIP BOT</p>
+
+    <label>Select Market Pair:</label>
+    <select id="pair">
+      <option>Select Pair</option>
+        <option>EUR/USD (OTC)</option>
+        <option>GBP/USD (OTC)</option>
+        <option>USD/JPY (OTC)</option>
+        <option>USD/INR (OTC)</option>
+        <option>AUD/USD (OTC)</option>
+        <option>USD/BDT (OTC)</option>
+        <option>EUR/JPY (OTC)</option>
+        <option>EUR/GBP (OTC)</option>
+        <option>GBP/JPY (OTC)</option>
+        <option>USD/NGN (OTC)</option>
+        <option>USD/IDR (OTC)</option>
+        <option>USD/PKR (OTC)</option>
+        <option>USD/TRY (OTC)</option>
+        <option>USD/ZAR (OTC)</option>
+        <option>USD/MXN (OTC)</option>
+        <option>USD/ARS (OTC)</option>
+    </select>
+
+    <label>Select Duration:</label>
+    <select id="duration">
+      <option>Select Duration</option>
+      <option>1 Minute</option>
+      <option>5 Minutes</option>
+      <option>15 Minutes</option>
+    </select>
+
+    <label>Select Trend:</label>
+    <select id="trend">
+      <option>Select Trend</option>
+      <option>Uptrend</option>
+      <option>Downtrend</option>
+      <option>Sideways</option>
+    </select>
+
+    <label>Select Momentum:</label>
+    <select id="momentum">
+      <option>Select Momentum</option>
+      <option>Strong</option>
+      <option>Weak</option>
+      <option>Neutral</option>
+    </select>
+
+    <button onclick="generateSignal()">Generate Signal</button>
+
+    <div class="output" id="signalOutput"></div>
+  </div>
+
+  <div class="popup" id="rulesPopup">
+    <h3>⚠️ AVOID ⚠️</h3>
+    <p>DOZI<br>GAP UP<br>GAP DOWN<br>HAMMER</p>
+    <button onclick="document.getElementById('rulesPopup').style.display='none'">Close</button>
+  </div>
+
+  <script>
+    function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      if (email === "Siyamhossain354@gmail.com" && password === "dx07bot") {
+        document.getElementById('loginBox').style.display = "none";
+        document.getElementById('mainApp').style.display = "block";
+      } else {
+        document.getElementById('loginError').innerText = "Invalid email or password!";
+      }
+    }
+
+    function generateSignal() {
+      const pair = document.getElementById("pair").value;
+      const duration = document.getElementById("duration").value;
+      const trend = document.getElementById("trend").value;
+      const momentum = document.getElementById("momentum").value;
+
+      if (
+        pair === "Select Pair" ||
+        duration === "Select Duration" ||
+        trend === "Select Trend" ||
+        momentum === "Select Momentum"
+      ) {
+        alert("Please select all fields!");
+        return;
+      }
+
+      const direction = Math.random() > 0.5 ? "CALL" : "PUT";
+      const probability = (95 + Math.random() * 5).toFixed(2);
+      const volume = ["Low", "Medium", "High"][Math.floor(Math.random() * 3)];
+      const momentumDisplay = momentum === "Weak" ? "BAD MOMENTUM" : momentum.toUpperCase();
+
+      const now = new Date();
+      const hours = now.getHours() % 12 || 12;
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const ampm = now.getHours() >= 12 ? "PM" : "AM";
+      const timeStr = `${hours}:${minutes} ${ampm}`;
+
+      const signalText =
+        `${pair} - ${direction}\n` +
+        `Trade Time: ${timeStr}\n` +
+        `Duration: ${duration}\n` +
+        `Trend: ${trend}\n` +
+        `Probability: ${probability}%\n` +
+        `Volume: ${volume}\n` +
+        `Momentum: ${momentumDisplay}`;
+
+      document.getElementById("signalOutput").innerText = signalText;
+    }
+  </script>
+</body>
+</html>
